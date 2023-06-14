@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\TodoController;
+use App\Models\Todo;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -15,9 +17,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware'=> ['web']],function () {
+
     Route::get('/', function () {
         return view('frontend.index');
     });
+
+
+    Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
+    Route::get('/todos-json', [TodoController::class, 'getJson'])->name('todos.getJson');
+    Route::get('/todos-datatable',[TodoController::class, 'getDatatable'])->name('todos.getDatatable');
+    Route::get('/todos/create', [TodoController::class, 'create'])->name('todos.create');
+    Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
+    Route::get('/todos/{id}/edit', [TodoController::class, 'edit'])->name('todos.edit');
+    Route::put('/todos/{id}', [TodoController::class, 'update'])->name('todos.update');
+    Route::get('/todos/{id}/delete',[TodoController::class, 'destroy'])->name('todos.destroy');
 
 });
 

@@ -1875,7 +1875,7 @@ ul.list_2 li:before {
 
 
 /*Preloading*/
-/* #preloader {
+#preloader {
 	position: fixed;
 	top:0;
 	left:0;
@@ -1885,7 +1885,7 @@ ul.list_2 li:before {
 	bottom:0;
 	background-color:#fff; 
 	z-index:999999; 
-} */
+}
 .sk-spinner-wave.sk-spinner {
   margin:-15px 0 0 -25px; 
   position:absolute;

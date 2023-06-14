@@ -10,6 +10,12 @@
 
 <link href="{{ URL::asset('/vendor/fontawesome-free/css/all.min.css')  }}" rel="stylesheet" type="text/css">
 
+
+<!-- site-bar -->
+<link rel="stylesheet" type="text/css" href="{{ URL::asset('/dist/zeynep.css')  }}">
+<link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/base.css')  }}">
+<link rel="stylesheet" type="text/css" href="{{ URL::asset('/css/right.css')  }}">
+
 {{-- <link href="{{ url('front-end/css/style.css') }}" rel="stylesheet"> --}}
 <link href="{{ url('front-end/css/menu.css') }}" rel="stylesheet">
 
@@ -31,3 +37,6 @@
 
 <link href="{{ url('/vendor/fontawesome-free/css/all.min.css')  }}" rel="stylesheet" type="text/css" >
 <link href="{{ url('lnr/lnr.min.css')  }}" rel="stylesheet" type="text/css" >
+
+<!-- style -->
+<link rel="stylesheet" href="{{ URL::asset('/css/style.css') }}">

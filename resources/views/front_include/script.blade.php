@@ -45,6 +45,8 @@
 <script src="{{ URL::asset('/assets/js/vendor/jszip.min.js') }}"></script>
 <script src="{{ URL::asset('/assets/js/vendor/buttons.colVis.min.js') }}"></script>
 
+<script src="{{ URL::asset('/dist/zeynep.js') }}"></script>
+
 
 
 

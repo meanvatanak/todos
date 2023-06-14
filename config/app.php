@@ -178,6 +178,9 @@ return [
         // Sweet Alert
         RealRashid\SweetAlert\SweetAlertServiceProvider::class,
 
+        // Laravel DataTables
+        Yajra\DataTables\DataTablesServiceProvider::class,
+
     ],
 
     /*

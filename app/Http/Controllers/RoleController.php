@@ -37,12 +37,14 @@ class RoleController extends Controller
 			->orderBy('id', 'DESC')->get();
 		}
 
+		$nav = session('permissions')[0];
+
 		return DataTables::of($model)
 			->addIndexColumn()
-			->addColumn('action', function($row){
+			->addColumn('action', function($row) use ($nav){
 				$action = '';
 				// $action .=' <a class="text-primary" href="role/' . $row['id'] . '/view"><i class="far fa-eye"></i></a>';
-				if(permission(Auth::user()->role_id,'Role')->optEdit != 0)
+				if($nav['optEdit'] != 0)
 				{ $action .=' <a class="text-primary" href="role/' . $row['id'] . '/edit"><i class="fas fa-edit"></i></a>'; }
 				// $action .=' <a class="text-primary" href="role/' . $row['id'] . '/delete"><i class="fas fa-trash"></i></a>';
 				return  $action; 
@@ -57,8 +59,7 @@ class RoleController extends Controller
 	 */
 	public function index()
 	{
-		$permission = permission(Auth::user()->role_id,'Role');
-		if($permission->optView != 1)
+		if(!isset(session('permissions')[0]) || session('permissions')[0]['optView'] == 0)
 		{ return back(); }
 
 		return view('role.index');
@@ -71,8 +72,7 @@ class RoleController extends Controller
 	 */
 	public function create()
 	{
-		$permission = permission(Auth::user()->role_id,'Role');
-		if($permission->optCreate != 1)
+		if(!isset(session('permissions')[0]) || session('permissions')[0]['optCreate'] == 0)
 		{ return back(); }
 
 		$labels = Label::orderBy('id', 'ASC')->get();
@@ -89,8 +89,7 @@ class RoleController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$permission = permission(Auth::user()->role_id,'Role');
-		if($permission->optCreate != 1)
+		if(!isset(session('permissions')[0]) || session('permissions')[0]['optCreate'] == 0)
 		{ return back(); }
 
 		$rules = array(
@@ -180,8 +179,7 @@ class RoleController extends Controller
 	 */
 	public function edit($id)
 	{
-		$permission = permission(Auth::user()->role_id,'Role');
-		if($permission->optEdit != 1)
+		if(!isset(session('permissions')[0]) || session('permissions')[0]['optEdit'] == 0)
 		{ return back(); }
 
 		if($id == 1)
@@ -210,8 +208,7 @@ class RoleController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		$permission = permission(Auth::user()->role_id,'Role');
-		if($permission->optEdit != 1)
+		if(!isset(session('permissions')[0]) || session('permissions')[0]['optEdit'] == 0)
 		{ return back(); }
 
 		$role = Role::findorfail($id);

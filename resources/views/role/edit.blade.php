@@ -14,7 +14,7 @@
     <div class="col-lg-12">
       
       {!! Form::model($role , array('route' => array('role.update', $role->id), 'method'=>'PUT', 'files'=>'true')) !!}
-      @csrf
+      {{-- @csrf --}}
       <div class="row" >
           <div class="col-lg-6">
 
@@ -49,7 +49,7 @@
             <label for="" class="text-gray-900 m-0">Permission:</label>
 
             <!-- tab Card User's Website -->
-            <div class="accordion" id="accordionWebsite">
+            {{-- <div class="accordion" id="accordionWebsite">
               <div class="card mb-0">
                 <div class="card-header" id="headingWebsite">
                     <h6 class="m-0">
@@ -104,7 +104,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> --}}
 
             <!-- tab Card User's Role -->
             <div class="accordion" id="accordionRole1">

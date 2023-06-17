@@ -15,7 +15,7 @@
       
       {!! Form::open(array('url'=>'todos', 'files'=>true, 'autocomplete' => 'off')) !!}
       @csrf
-      {{-- @include('common.errors') --}}
+      @include('common.errors')
 
         <div class="row">
 

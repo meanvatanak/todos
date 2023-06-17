@@ -14,7 +14,7 @@
     <div class="col-lg-12">
       
       {!! Form::open(array('url'=>'role', 'files'=>'true')) !!}
-      @csrf
+      {{-- @csrf --}}
       <div class="row">
           <div class="col-lg-6">
 

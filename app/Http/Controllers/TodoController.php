@@ -75,17 +75,30 @@ class TodoController extends Controller
                 ->withErrors($validator);
 		}
 
-        $todo = new Todo();
-        $todo->name = $request->name;
-        $todo->due_date = date('Y-m-d', strtotime($request->due_date));
-        $todo->description = $request->description;
-        $todo->status = $request->status?1:0;
-        $todo->timestamps = false;
-        $todo->save();
+        // $todo = new Todo();
+        // $todo->name = $request->name;
+        // $todo->due_date = date('Y-m-d', strtotime($request->due_date));
+        // $todo->description = $request->description;
+        // $todo->status = $request->status?1:0;
+        // $todo->timestamps = false;
+        // $todo->save();
 
-        toast('success', 'Todo created successfully.');
-        return redirect()->route('todos.index');
-        // return response()->json($todo);
+        $todo = Todo::create([
+                'name' => $request->name,
+                'due_date' => date('Y-m-d', strtotime($request->due_date)),
+                'description' => $request->description,
+                'status' => $request->status?1:0,
+        ]);
+
+        // toast('success', 'Todo created successfully.');
+        // return redirect()->route('todos.index');
+        // $data = [
+        //     'statusCode' => 201,
+        //     'message' => 'Todo created successfully.',
+        //     'data' => $todo
+        // ];
+
+        return response()->json($todo);
     }
 
     // edit todo

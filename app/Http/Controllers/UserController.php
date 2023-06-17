@@ -57,6 +57,8 @@ class UserController extends Controller
 			->orderBy('id', 'DESC')->get();
 		}
 
+		// $nav = session('permissions')[1];
+
 		return DataTables::of($model)
 			->addIndexColumn()
 			->addColumn('created_name', function (UserHistory $model) {
@@ -113,19 +115,19 @@ class UserController extends Controller
 				->where($matchthese)
 				->orderBy('id', 'DESC')->get();
 			}
-
+			$nav = session('permissions')[1];
 			return DataTables::of($model)
 				->addIndexColumn()
 				->addColumn('role', function (User $model) {
 						return $model->role_id ? $model->role->role_name : '-';
 				})
-				->addColumn('action', function($row){
+				->addColumn('action', function($row) 	use ($nav){
 					$action = '';
-					if(permission(Auth::user()->role_id,'User')->optShow != 0)
+					if($nav['optShow'] != 0)
 					{ $action .=' <a class="text-primary" href="user/' . $row['id'] . '/show"><i class="far fa-eye"></i></a>'; }
-					if(permission(Auth::user()->role_id,'User')->optEdit != 0)
+					if($nav['optEdit'] != 0)
 					{ $action .=' <a class="text-primary" href="user/' . $row['id'] . '/edit"><i class="fas fa-edit"></i></a>'; }
-					if(permission(Auth::user()->role_id,'User')->optDelete != 0)
+					if($nav['optDelete'] != 0)
 					{ $action .=' <a class="text-danger delete-confirm" href="user/' . $row['id'] . '/delete"><i class="fas fa-trash"></i></a>'; }
 					return  $action; 
 				})
@@ -140,8 +142,7 @@ class UserController extends Controller
      */
     public function index()
     {
-			$permission = permission(Auth::user()->role_id,'User');
-			if($permission->optView != 1)
+			if(!isset(session('permissions')[1]) || session('permissions')[1]['optView'] == 0)
 			{ return back(); }
 
     	return view('user.index');
@@ -154,8 +155,7 @@ class UserController extends Controller
      */
     public function create()
     {
-			$permission = permission(Auth::user()->role_id,'User');
-			if($permission->optCreate != 1)
+			if(!isset(session('permissions')[1]) || session('permissions')[1]['optCreate'] == 0)
 			{ return back(); }
 
 			$roles = Role::where([
@@ -183,8 +183,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-			$permission = permission(Auth::user()->role_id,'User');
-			if($permission->optCreate != 1)
+			if(!isset(session('permissions')[1]) || session('permissions')[1]['optCreate'] == 0)
 			{ return back(); }
 
 			// Create The User
@@ -312,9 +311,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-			$permission = permission(Auth::user()->role_id,'User');
-			if($permission->optShow != 1)
+			if(!isset(session('permissions')[1]) || session('permissions')[1]['optShow'] == 0)
 			{ return back(); }
+
 			$user = User::findorfail($id);
 			$user_history = UserHistory::where([
 				['user_id',$id]
@@ -333,8 +332,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-			$permission = permission(Auth::user()->role_id,'User');
-			if($permission->optEdit != 1)
+			if(!isset(session('permissions')[1]) || session('permissions')[1]['optEdit'] == 0)
 			{ return back(); }
 
 			$user = User::findorfail($id);
@@ -351,8 +349,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-			$permission = permission(Auth::user()->role_id,'User');
-			if($permission->optEdit != 1)
+			if(!isset(session('permissions')[1]) || session('permissions')[1]['optEdit'] == 0)
 			{ return back(); }
 			
 			if($request->input('password') != '')
@@ -464,8 +461,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-			$permission = permission(Auth::user()->role_id,'User');
-			if($permission->optDelete != 1)
+			if(!isset(session('permissions')[1]) || session('permissions')[1]['optDelete'] == 0)
 			{ 
 				toast('You are not allowed to delete!','error');
 				return back(); 

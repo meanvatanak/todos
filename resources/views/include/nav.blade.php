@@ -35,7 +35,7 @@
 				</a>
 			</li>
 
-			@if(permission(Auth::user()->role_id, 'Slideshow')->header == 'Website')
+			{{--  @if(permission(Auth::user()->role_id, 'Slideshow')->header == 'Website')
 			<li class="side-nav-item">
 				<a data-bs-toggle="collapse" href="#sidebarEcommerce" aria-expanded="false" aria-controls="sidebarEcommerce" class="side-nav-link">
 					<i class="uil-store"></i>
@@ -47,25 +47,10 @@
 						@if(navbarCheck()[2]->name == 'Slideshow')
 							<li> <a href="{{ url('slideshow') }}">Slideshow</a> </li>
 						@endif
-						@if(navbarCheck()[3]->name == 'CareerType')
-							<li> <a href="{{ url('career-type') }}">Career Type</a> </li> 
-						@endif
-						@if(navbarCheck()[4]->name == 'Career')
-							<li> <a href="{{ url('career-opportunity') }}">Career</a> </li> 
-						@endif
-						@if(navbarCheck()[5]->name == 'DocumentType')
-							<li> <a href="{{ url('document-type') }}">Document Type</a> </li> 
-						@endif
-						@if(navbarCheck()[6]->name == 'Document')
-							<li> <a href="{{ url('document') }}">Document</a> </li> 
-						@endif
-						@if(navbarCheck()[7]->name == 'Contact_US')
-							<li> <a href="{{ url('contact-us-index') }}">Contact US</a> </li> 
-						@endif
 					</ul>
 				</div>
 			</li>
-			@endif
+			@endif  --}}
 			@if(permission(Auth::user()->role_id, 'User')->header == 'Permission')
 			<li class="side-nav-item">
 				<a data-bs-toggle="collapse" href="#sidebarMaps" aria-expanded="false" aria-controls="sidebarMaps" class="side-nav-link">

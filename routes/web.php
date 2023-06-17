@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\TodoController;
-use App\Models\Todo;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -34,8 +36,6 @@ Route::group(['middleware'=> ['web']],function () {
 
 });
 
-
-
 Route::get('login', [AuthController::class, 'index'])->name('login');
 Route::get('post-login', [AuthController::class, 'postLogin'])->name('login.post');
 
@@ -61,26 +61,29 @@ Route::group(['middleware'=> ['auth']],function () {
     });
 
     //Role
-    Route::get('/role','RoleController@index')->name('role.index');
-    Route::get('/role-datatable','RoleController@getDatatable')->name('role.getDatatable');
-    Route::get('/role/create','RoleController@create')->name('role.create');
-    Route::post('/role','RoleController@store')->name('role.store');
-    Route::get('/role/{role}/edit','RoleController@edit')->name('role.edit');
-    Route::put('/role/{role}','RoleController@update')->name('role.update');
-    // Route::get('/role/{id}/delete','RoleController@deleteEdit')->name('role.deleteEdit');
+    Route::get('/role',[RoleController::class, 'index'])->name('role.index');
+    Route::get('/role-datatable',[RoleController::class, 'getDatatable'])->name('role.getDatatable');
+    Route::get('/role/create',[RoleController::class, 'create'])->name('role.create');
+    Route::post('/role',[RoleController::class, 'store'])->name('role.store');
+    Route::get('/role/{id}/edit',[RoleController::class, 'edit'])->name('role.edit');
+    Route::put('/role/{id}',[RoleController::class, 'update'])->name('role.update');
+    // Route::get('/role/{id}/delete',[RoleController::class, 'update'])->name('role.deleteEdit');
     
     //user
-    Route::get('/user','UserController@index')->name('user.index');
-    Route::get('/user-datatable','UserController@getDatatable')->name('user.getDatatable');
-    Route::get('/user/create','UserController@create')->name('user.create');
-    Route::post('/user','UserController@store')->name('user.store');
-    Route::get('/user/{user}/edit','UserController@edit')->name('user.edit');
-    Route::get('/user/{id}/delete','UserController@destroy')->name('user.deleteEdit');
-    Route::put('/user/{user}','UserController@update')->name('user.update');
-    Route::get('/user/{post}','UserController@show')->name('user.show');
-    Route::get('/roleDynamic','UserController@baseRoleUser');
-    Route::get('/user/{user}/show','UserController@show')->name('user.show');
-    Route::get('/user-history-datatable','UserController@HistoryGetDatatable')->name('user_history.getDatatable');
-    Route::get('/user/{id}/history','UserController@history')->name('user.history');
-    // Route::delete('/user/{post}','UserController@destroy')->name('user.destroy');
+    Route::get('/user',[UserController::class, 'index'])->name('user.index');
+    Route::get('/user-datatable',[UserController::class, 'getDatatable'])->name('user.getDatatable');
+    Route::get('/user/create',[UserController::class, 'create'])->name('user.create');
+    Route::post('/user',[UserController::class, 'store'])->name('user.store');
+    Route::get('/user/{user}/edit',[UserController::class, 'edit'])->name('user.edit');
+    Route::get('/user/{id}/delete',[UserController::class, 'destroy'])->name('user.deleteEdit');
+    Route::put('/user/{user}',[UserController::class, 'update'])->name('user.update');
+    Route::get('/user/{post}',[UserController::class, 'show'])->name('user.show');
+    Route::get('/roleDynamic',[UserController::class, 'baseRoleUser']);
+    Route::get('/user/{user}/show',[UserController::class, 'show'])->name('user.show');
+    Route::get('/user-history-datatable',[UserController::class, 'HistoryGetDatatable'])->name('user_history.getDatatable');
+    Route::get('/user/{id}/history',[UserController::class, 'history'])->name('user.history');
+    // Route::delete('/user/{post}',[UserController::class, 'destroy'])->name('user.destroy');
 });
+// Auth::routes();
+
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

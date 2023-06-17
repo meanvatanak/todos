@@ -90,6 +90,53 @@ class TodoController extends Controller
                 'status' => $request->status?1:0,
         ]);
 
+        toast('success', 'Todo created successfully.');
+        return redirect()->route('todos.index');
+        // $data = [
+        //     'statusCode' => 201,
+        //     'message' => 'Todo created successfully.',
+        //     'data' => $todo
+        // ];
+
+        // return response()->json($todo);
+    }
+
+    // store todo
+    public function store_api(Request $request)
+    {
+        $rules = array(
+            'name' => 'required',
+            'due_date' => 'required',
+        );
+        
+        $messages = array(
+            'name.required' => 'Please Task Name!',
+            'due_date.required' => 'Please Select Due Date!',
+        );
+
+		$validator = Validator::make( $request->all(), $rules, $messages );
+		if ($validator->fails()) 
+        {
+		    return back()
+                ->withInput()
+                ->withErrors($validator);
+		}
+
+        // $todo = new Todo();
+        // $todo->name = $request->name;
+        // $todo->due_date = date('Y-m-d', strtotime($request->due_date));
+        // $todo->description = $request->description;
+        // $todo->status = $request->status?1:0;
+        // $todo->timestamps = false;
+        // $todo->save();
+
+        $todo = Todo::create([
+                'name' => $request->name,
+                'due_date' => date('Y-m-d', strtotime($request->due_date)),
+                'description' => $request->description,
+                'status' => $request->status?1:0,
+        ]);
+
         // toast('success', 'Todo created successfully.');
         // return redirect()->route('todos.index');
         // $data = [
@@ -98,7 +145,11 @@ class TodoController extends Controller
         //     'data' => $todo
         // ];
 
-        return response()->json($todo);
+        return response()->json([
+            'statusCode' => 201,
+            'message' => 'Todo created successfully.',
+            'data' => $todo
+        ]);
     }
 
     // edit todo
@@ -143,6 +194,44 @@ class TodoController extends Controller
         // return response()->json($todo);
     }
 
+    // store todo
+    public function update_api($id, Request $request)
+    {
+        $rules = array(
+            'name' => 'required',
+            'due_date' => 'required',
+        );
+        
+        $messages = array(
+            'name.required' => 'Please Task Name!',
+            'due_date.required' => 'Please Select Due Date!',
+        );
+
+		$validator = Validator::make( $request->all(), $rules, $messages );
+		if ($validator->fails()) 
+        {
+		    return back()
+                ->withInput()
+                ->withErrors($validator);
+		}
+
+        $todo = Todo::findorfail($id);
+        $todo->name = $request->name;
+        $todo->due_date = date('Y-m-d', strtotime($request->due_date));
+        $todo->description = $request->description;
+        $todo->status = $request->status?1:0;
+        $todo->timestamps = false;
+        $todo->save();
+
+        // toast('success', 'Todo update successfully.');
+        // return redirect()->route('todos.index');
+        return response()->json([
+            'statusCode' => 200,
+            'message' => 'Todo update successfully.',
+            'data' => $todo
+        ]);
+    }
+
     // delete todo
     public function destroy($id)
     {
@@ -152,5 +241,20 @@ class TodoController extends Controller
         toast('success', 'Todo deleted successfully.');
         return redirect()->route('todos.index');
         // return response()->json($todo);
+    }
+
+    // delete todo
+    public function destroy_api($id)
+    {
+        $todo = Todo::findorfail($id);
+        $todo->delete();
+
+        // toast('success', 'Todo deleted successfully.');
+        // return redirect()->route('todos.index');
+        return response()->json([
+            'statusCode' => 200,
+            'message' => 'Todo deleted successfully.',
+            'data' => $todo
+        ]);
     }
 }

@@ -30,9 +30,12 @@ Route::group(['middleware'=> ['web']],function () {
     Route::get('/todos-datatable',[TodoController::class, 'getDatatable'])->name('todos.getDatatable');
     Route::get('/todos/create', [TodoController::class, 'create'])->name('todos.create');
     Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
+    Route::post('/todos-json', [TodoController::class, 'store_api'])->name('todos.store');
     Route::get('/todos/{id}/edit', [TodoController::class, 'edit'])->name('todos.edit');
-    Route::put('/todos/{id}', [TodoController::class, 'update'])->name('todos.update');
+    Route::put('/todos-json/{id}', [TodoController::class, 'update'])->name('todos.update');
+    Route::put('/todos/{id}', [TodoController::class, 'update_api'])->name('todos.update');
     Route::get('/todos/{id}/delete',[TodoController::class, 'destroy'])->name('todos.destroy');
+    Route::get('/todos-json/{id}/delete',[TodoController::class, 'destroy_api'])->name('todos.destroy');
 
 });
 

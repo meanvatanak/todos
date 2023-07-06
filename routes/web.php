@@ -33,6 +33,9 @@ Route::post('api-login', [AuthController::class, 'login'])->name('login.login');
 Route::get('dashboard', [AuthController::class, 'dashboard']);
 // Route::get('/', [AuthController::class, 'dashboard']);
 
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/api-logout', [AuthController::class, 'api_logout'])->name('api_logout.logout');
+
 
 // Route::get('registration', [AuthController::class, 'registration'])->name('register');
 // Route::post('post-registration', [AuthController::class, 'postRegistration'])->name('register.post');
@@ -51,8 +54,8 @@ Route::group(['middleware'=> ['auth']],function () {
         return view('home');
     });
 
-    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::post('/api-logout', [AuthController::class, 'api_logout'])->name('logout.logout');
+    
+
 
     Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
     // Route::get('/todos','TodoController@index')->name('todos.index');

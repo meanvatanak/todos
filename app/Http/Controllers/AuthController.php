@@ -98,7 +98,7 @@ class AuthController extends Controller
 			$credentials = $request->only('username', 'password', 'status','delete_status');
 			if (Auth::attempt($credentials)) {
 				$user = User::find(Auth::user()->id);
-				$user->token = bin2hex(openssl_random_pseudo_bytes(30));
+				$user->token = $user->createToken('token')->plainTextToken;
 				$user->save();
 				$response = [
 					'user' => $user,

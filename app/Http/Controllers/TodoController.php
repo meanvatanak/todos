@@ -116,19 +116,19 @@ class TodoController extends Controller
         $rules = array(
             'name' => 'required',
             'due_date' => 'required',
+            'user_id' => 'required',
         );
         
         $messages = array(
             'name.required' => 'Please Task Name!',
             'due_date.required' => 'Please Select Due Date!',
+            'user_id.required' => 'Please Insert User!',
         );
 
 		$validator = Validator::make( $request->all(), $rules, $messages );
 		if ($validator->fails()) 
         {
-		    return back()
-                ->withInput()
-                ->withErrors($validator);
+		    return response()->json(['error'=>$validator->errors()], 401);
 		}
 
         // $todo = new Todo();
@@ -217,9 +217,7 @@ class TodoController extends Controller
 		$validator = Validator::make( $request->all(), $rules, $messages );
 		if ($validator->fails()) 
         {
-		    return back()
-                ->withInput()
-                ->withErrors($validator);
+		    return response()->json(['error'=>$validator->errors()], 401);
 		}
 
         $todo = Todo::findorfail($id);

@@ -142,8 +142,8 @@ class UserController extends Controller
      */
     public function index()
     {
-			if(!isset(session('permissions')[1]) || session('permissions')[1]['optView'] == 0)
-			{ return back(); }
+			// if(!isset(session('permissions')[1]) || session('permissions')[1]['optView'] == 0)
+			// { return back(); }
 
     	return view('user.index');
     }

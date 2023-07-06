@@ -55,6 +55,7 @@
               <th>Name</th>
               <th>Due Date</th>
               <th>Description</th>
+              <th>Name</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -118,6 +119,7 @@
             }
           },
           {data:'description', name: 'description'},
+          {data:'user', name: 'user'},
           {
             data: "status", 
             name: 'status',

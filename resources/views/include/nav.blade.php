@@ -35,7 +35,7 @@
 				</a>
 			</li>
 
-			{{--  @if(permission(Auth::user()->role_id, 'Slideshow')->header == 'Website')
+			{{--  @if(isset(session('permissions')[9]) && session('permissions')[9]['header'] == 'Permission')
 			<li class="side-nav-item">
 				<a data-bs-toggle="collapse" href="#sidebarEcommerce" aria-expanded="false" aria-controls="sidebarEcommerce" class="side-nav-link">
 					<i class="uil-store"></i>
@@ -51,7 +51,7 @@
 				</div>
 			</li>
 			@endif  --}}
-			@if(permission(Auth::user()->role_id, 'User')->header == 'Permission')
+			@if(isset(session('permissions')[0]) && session('permissions')[0]['header'] == 'Permission')
 			<li class="side-nav-item">
 				<a data-bs-toggle="collapse" href="#sidebarMaps" aria-expanded="false" aria-controls="sidebarMaps" class="side-nav-link">
 					<i class="uil-padlock"></i>

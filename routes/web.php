@@ -24,27 +24,15 @@ Route::group(['middleware'=> ['web']],function () {
         return view('frontend.index');
     });
 
-
-    Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
-    Route::get('/todos-json', [TodoController::class, 'getJson'])->name('todos.getJson');
-    Route::get('/todos-datatable',[TodoController::class, 'getDatatable'])->name('todos.getDatatable');
-    Route::get('/todos/create', [TodoController::class, 'create'])->name('todos.create');
-    Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
-    Route::post('/todos-json', [TodoController::class, 'store_api'])->name('todos.store');
-    Route::get('/todos/{id}/edit', [TodoController::class, 'edit'])->name('todos.edit');
-    Route::put('/todos-json/{id}', [TodoController::class, 'update'])->name('todos.update');
-    Route::put('/todos/{id}', [TodoController::class, 'update_api'])->name('todos.update');
-    Route::get('/todos/{id}/delete',[TodoController::class, 'destroy'])->name('todos.destroy');
-    Route::get('/todos-json/{id}/delete',[TodoController::class, 'destroy_api'])->name('todos.destroy');
-
 });
 
 Route::get('login', [AuthController::class, 'index'])->name('login');
-Route::get('post-login', [AuthController::class, 'postLogin'])->name('login.post');
+Route::get('get-login', [AuthController::class, 'postLogin'])->name('login.post');
+Route::post('api-login', [AuthController::class, 'login'])->name('login.login');
 
 Route::get('dashboard', [AuthController::class, 'dashboard']);
 // Route::get('/', [AuthController::class, 'dashboard']);
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
 
 // Route::get('registration', [AuthController::class, 'registration'])->name('register');
 // Route::post('post-registration', [AuthController::class, 'postRegistration'])->name('register.post');
@@ -62,6 +50,22 @@ Route::group(['middleware'=> ['auth']],function () {
     Route::get('/homepage', function () {
         return view('home');
     });
+
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/api-logout', [AuthController::class, 'api_logout'])->name('logout.logout');
+
+    Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
+    // Route::get('/todos','TodoController@index')->name('todos.index');
+    Route::get('/todos-json', [TodoController::class, 'getJson'])->name('todos-json.getJson');
+    Route::get('/todos-datatable',[TodoController::class, 'getDatatable'])->name('todos.getDatatable');
+    Route::get('/todos/create', [TodoController::class, 'create'])->name('todos.create');
+    Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
+    Route::post('/todos-json', [TodoController::class, 'store_api'])->name('todos-json.store');
+    Route::get('/todos/{id}/edit', [TodoController::class, 'edit'])->name('todos.edit');
+    Route::put('/todos/{id}', [TodoController::class, 'update'])->name('todos.update');
+    Route::put('/todos-json/{id}', [TodoController::class, 'update_api'])->name('todos-json.update');
+    Route::get('/todos/{id}/delete',[TodoController::class, 'destroy'])->name('todos.destroy');
+    Route::get('/todos-json/{id}/delete',[TodoController::class, 'destroy_api'])->name('todos-json.destroy');
 
     //Role
     Route::get('/role',[RoleController::class, 'index'])->name('role.index');

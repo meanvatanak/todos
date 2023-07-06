@@ -73,13 +73,40 @@ class AuthController extends Controller
 			$request['delete_status'] = 0;
 			$credentials = $request->only('username', 'password', 'status','delete_status');
 			if (Auth::attempt($credentials)) {
+				$user = User::find(Auth::user()->id);
+				$user->token = bin2hex(openssl_random_pseudo_bytes(30));
+				$user->save();
 				toast('You have Successfully loggedin!','success');
 				return redirect()->intended('/dashboard');
-				// return view('admin/index');
-				// return redirect("dashboard");
 			}
 			toast('Oppes! You have entered invalid users!!!','error');
 			return redirect("login");
+    }
+
+		public function login(Request $request)
+    {
+			$validator = Validator::make($request->all(), [
+			'username' => 'required',
+			'password' => 'required|min:8',
+            
+			]);
+			if ($validator->fails()) {
+				return response()->json(['error'=>$validator->errors()], 401);
+			}
+      $request['status'] = 1;
+			$request['delete_status'] = 0;
+			$credentials = $request->only('username', 'password', 'status','delete_status');
+			if (Auth::attempt($credentials)) {
+				$user = User::find(Auth::user()->id);
+				$user->token = bin2hex(openssl_random_pseudo_bytes(30));
+				$user->save();
+				$response = [
+					'user' => $user,
+					'token' => $user->token
+				];
+				return response($response, 201);
+			}
+			return response()->json(['error'=>$validator->errors()], 401);
     }
 
     /**
@@ -210,9 +237,25 @@ class AuthController extends Controller
      * @return response()
      */
     public function logout() {
+			//remove token
+			$user = User::find(Auth::user()->id);
+			$user->token = null;
+			$user->save();
+
 			Session::flush();
 			Auth::logout();
 
 			return Redirect('login');
+		}
+
+		public function api_logout(){
+			$user = User::find(Auth::user()->id);
+			$user->token = null;
+			$user->save();
+
+			Session::flush();
+			Auth::logout();
+
+			return response()->json(['message' => 'Successfully logged out']);
 		}
 }

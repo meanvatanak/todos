@@ -8,6 +8,7 @@ use App\Models\ElibraryFavorite;
 use App\Models\ELibraryHistory;
 use App\Models\Genre;
 use App\Models\Publisher;
+use App\Http\Resources\ElibraryResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -84,6 +85,28 @@ class ELibraryController extends Controller
 
     public function api_favorite(Request $request)
     {
+
+        //validate if user already favorite the ebook
+        $ebookFavorite = ElibraryFavorite::where([
+            ['user_id', '=', $request->user_id],
+            ['elibrary_id', '=', $request->elibrary_id],
+            ['delete_status', '=', 0],
+        ])->first();
+
+        if($ebookFavorite)
+        {
+            $ebookFavorite->delete_status = 1;
+            $ebookFavorite->timestamps = false;
+            $ebookFavorite->save();
+
+            $response = [
+                'message' => 'E-Book.',
+                'statusCode' => 200,
+                'data' => $ebookFavorite
+            ];
+            return response()->json($response);
+        }
+
         $ebook = ELibrary::findorfail($request->elibrary_id);
 
         $ebookFavorite = new ElibraryFavorite();
@@ -105,27 +128,50 @@ class ELibraryController extends Controller
     public function get_favorite(Request $request)
     {
         //get elibrary and inner join with elibrary favorite
-        $ebookFavorite = ELibrary::join('elibrary_favorites', 'elibrary_favorites.elibrary_id', '=', 'e_libraries.id')
-                    ->where('elibrary_favorites.user_id', $request->user_id)
-                    ->orderby('e_libraries.id', 'DESC')
-                    ->select(
-                        "e_libraries.id as id",
-                        "e_libraries.title as title",
-                        "e_libraries.year as year",
-                        "e_libraries.page as page",
-                        "e_libraries.author_id as author_id",
-                        "e_libraries.publisher_id as publisher_id",
-                        "e_libraries.genre_id as genre_id",
-                        "e_libraries.book_cover as book_cover",
-                        "e_libraries.book_file as book_file",
-                        "e_libraries.view as view",
-                    )
-                    ->distinct()
-                    ->get();
+        // $ebookFavorite = ELibrary::join('elibrary_favorites', 'elibrary_favorites.elibrary_id', '=', 'e_libraries.id')
+        //             ->where('elibrary_favorites.user_id', $request->user_id)
+        //             ->orderby('e_libraries.id', 'DESC')
+        //             ->select(
+        //                 "e_libraries.id as id",
+        //                 "e_libraries.title as title",
+        //                 "e_libraries.year as year",
+        //                 "e_libraries.page as page",
+        //                 "e_libraries.author_id as author_id",
+        //                 "e_libraries.publisher_id as publisher_id",
+        //                 "e_libraries.genre_id as genre_id",
+        //                 "e_libraries.book_cover as book_cover",
+        //                 "e_libraries.book_file as book_file",
+        //                 "e_libraries.view as view",
+        //             )
+        //             ->distinct()
+        //             ->get();
+        $ebookFavorite = ELibraryFavorite::where(function ($q) use($request){
+            $q->where('user_id', $request->user_id);
+            $q->where('delete_status', 0);
+        })
+        ->groupBy('elibrary_id')
+        ->orderby('elibrary_id', 'DESC')
+        ->get();
+
+        $ebookFavorite = ElibraryResource::collection($ebookFavorite);
+
+        return response()->json([
+            'message' => 'success',
+            'statusCode' => 200,
+            'data' => $ebookFavorite
+        ]);
+    }
+
+    public function get_books_by_author(Request $request)
+    {
+        $ebooks = ELibrary::where(function($q) use($request) {
+            $q->where('author_id', '=', $request->author_id);
+        })->orderby('id', 'DESC')->get();
+
         $response = [
             'message' => 'E-Book.',
             'statusCode' => 200,
-            'data' => $ebookFavorite
+            'data' => $ebooks
         ];
         return response()->json($response);
     }

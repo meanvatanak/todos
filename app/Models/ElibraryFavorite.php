@@ -19,8 +19,8 @@ class ElibraryFavorite extends Model
     ];
 
     public function elibrary()
-    { return $this->belongsTo(Elibrary::class, 'elibrary_id', 'id'); }
+    { return $this->belongsTo(Elibrary::class); }
 
     public function user()
-    { return $this->belongsTo(User::class, 'user_id', 'id'); }
+    { return $this->belongsTo(User::class); }
 }

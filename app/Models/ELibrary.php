@@ -20,6 +20,7 @@ class ELibrary extends Model
         'author_id',
         'publisher_id',
         'genre_id',
+        'view',
 
         'status',
         'delete_status',
@@ -30,6 +31,11 @@ class ELibrary extends Model
         'updated_at',
         'deleted_at',
     );
+
+    public function elibraryFavorites()
+    {
+        return $this->hasMany(ELibraryFavorite::class);
+    }
 
     public function author()
     { return $this->belongsTo(Author::class,'author_id'); }

@@ -15,7 +15,12 @@ class TodoController extends Controller
     {
         // dd(Auth::user()->role);
         $todos = Todo::orderby('id', 'DESC')->get();
-        return response()->json($todos);
+        $response = [
+            'message' => 'Todo list.',
+            'statusCode' => 200,
+            'data' => $todos
+        ];
+        return response()->json($response);
     }
 
     // index of todo
@@ -147,15 +152,13 @@ class TodoController extends Controller
                 'user_id' => $request->user_id,
         ]);
 
-        // toast('success', 'Todo created successfully.');
-        // return redirect()->route('todos.index');
-        // $data = [
-        //     'statusCode' => 201,
-        //     'message' => 'Todo created successfully.',
-        //     'data' => $todo
-        // ];
+        $response = [
+            'message' =>  'Todo created successfully.',
+            'statusCode' => 200,
+            'data' => $todo
+        ];
 
-        return response()->json($todo);
+        return response($response);
     }
 
     // edit todo
@@ -229,9 +232,12 @@ class TodoController extends Controller
         $todo->timestamps = false;
         $todo->save();
 
-        // toast('success', 'Todo update successfully.');
-        // return redirect()->route('todos.index');
-        return response()->json($todo);
+        $response = [
+            'message' => 'Todo update successfully.',
+            'statusCode' => 200,
+            'data' => $todo
+        ];
+        return response($response);
     }
 
     // delete todo
@@ -251,8 +257,14 @@ class TodoController extends Controller
         $todo = Todo::findorfail($id);
         $todo->delete();
 
+        $response = [
+            'message' => 'Todo deleted successfully.',
+            'statusCode' => 200,
+        ];
+
         // toast('success', 'Todo deleted successfully.');
         // return redirect()->route('todos.index');
-        return response()->json($todo);
+        // return response()->json($response);
+        return response($response);
     }
 }

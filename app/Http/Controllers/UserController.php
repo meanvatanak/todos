@@ -15,7 +15,18 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
-	
+	public function api_user()
+	{
+		$model = User::query()
+		->where(function($query){
+			$query->where('status', 1);
+			$query->where('delete_status', 0);
+		})
+		->orderBy('id', 'DESC')->get();
+
+		return response()->json($model);
+	}
+
 	public function history($id)
 	{
 			$model = UserHistory::findorfail($id);

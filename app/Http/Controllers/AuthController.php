@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
@@ -91,22 +93,44 @@ class AuthController extends Controller
             
 			]);
 			if ($validator->fails()) {
-				return response()->json(['error'=>$validator->errors()], 401);
+				return response()->json(['error'=>$validator->errors()], Response::HTTP_UNAUTHORIZED);
 			}
       $request['status'] = 1;
 			$request['delete_status'] = 0;
 			$credentials = $request->only('username', 'password', 'status','delete_status');
-			if (Auth::attempt($credentials)) {
-				$user = User::find(Auth::user()->id);
-				$user->token = $user->createToken('token')->plainTextToken;
-				$user->save();
-				$response = [
-					'user' => $user,
-					'token' => $user->token
-				];
-				return response($response, 201);
+
+			if(!Auth::attempt($credentials)) {
+				return response([
+					'message' => 'Invalid Credentials!'
+				], Response::HTTP_UNAUTHORIZED);
 			}
-			return response()->json(['error'=>$validator->errors()], 401);
+
+			// if (Auth::attempt($credentials)) {
+			// 	$user = User::find(Auth::user()->id);
+			// 	$user->token = $user->createToken('token')->plainTextToken;
+			// 	$user->save();
+			// 	$response = [
+			// 		'message' => 'You have Successfully loggedin!',
+			// 		'statusCode' => 200,
+			// 		'data' => $user,
+			// 	];
+			// 	return response($response);
+			// }
+			// return response()->json(['error'=>$validator->errors()], 401);
+
+			$user = User::find(Auth::user()->id);
+			$user->token = $user->createToken('token')->plainTextToken;
+			$user->save();
+
+			$response = [
+				'message' => 'You have Successfully loggedin!',
+				'statusCode' => 200,
+				'user' => $user,
+			];
+			return response(
+				$response,
+				Response::HTTP_OK
+			);
     }
 
     /**
@@ -248,14 +272,22 @@ class AuthController extends Controller
 			return Redirect('login');
 		}
 
-		public function api_logout(){
-			$user = User::find(Auth::user()->id);
+		public function api_logout(Request $request){
+
+			$user = User::find($request->user_id);
+
+			PersonalAccessToken::where('token', $user->token)->delete();
+
 			$user->token = null;
 			$user->save();
 
 			Session::flush();
 			Auth::logout();
 
-			return response()->json(['message' => 'Successfully logged out']);
+			$response = [
+				'message' => 'You have Successfully loggedout!',
+				'statusCode' => 200,
+			];
+			return response($response);
 		}
 }

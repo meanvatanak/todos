@@ -15,30 +15,30 @@ class ElibraryResource extends JsonResource
     public function toArray($request)
     {
         return [
-                'id' => $this->elibrary->id,
-                'title' => $this->elibrary->title,
-                'sub_title' => $this->elibrary->sub_title,
-                'year' => $this->elibrary->year,
-                'page' => $this->elibrary->page,
-                'book_cover' => $this->elibrary->book_cover,
-                'book_file' => $this->elibrary->book_file,
-                'author_id' => $this->elibrary->author_id,
-                'publisher_id' => $this->elibrary->publisher_id,
-                'genre_id' => $this->elibrary->genre_id,
-                'view' => $this->elibrary->view,
-    
-                'status' => $this->elibrary->status,
-                'delete_status' => $this->elibrary->delete_status,
-                'created_by' => $this->elibrary->created_by,
-                'updated_by' => $this->elibrary->updated_by,
-                'deleted_by' => $this->elibrary->deleted_by,
-                'created_at' => $this->elibrary->created_at,
-                'updated_at' => $this->elibrary->updated_at,
-                'deleted_at' => $this->elibrary->deleted_at,
-    
-                'author' => $this->elibrary->author->name,
-                'publisher' => $this->elibrary->publisher->name,
-                'genre' => $this->elibrary->genre->name,
+            'id' => $this->id,
+            'title' => $this->title,
+            'sub_title' => $this->sub_title,
+            'year' => $this->year,
+            'page' => $this->page,
+            'book_cover' => $this->book_cover,
+            'book_file' => $this->book_file,
+            'author_id' => $this->author_id,
+            'publisher_id' => $this->publisher_id,
+            'genre_id' => $this->genre_id,
+            'view' => $this->view,
+
+            'status' => $this->status,
+            'delete_status' => $this->delete_status,
+            'created_by' => $this->created_by,
+            'updated_by' => $this->updated_by,
+            'deleted_by' => $this->deleted_by,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'deleted_at' => $this->deleted_at,
+
+            'author' => $this->author->name,
+            'publisher' => $this->publisher->name,
+            'genre' => $this->genre->name,
         ];
     }
 }

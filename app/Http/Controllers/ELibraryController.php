@@ -9,6 +9,7 @@ use App\Models\ELibraryHistory;
 use App\Models\Genre;
 use App\Models\Publisher;
 use App\Http\Resources\ElibraryResource;
+use App\Http\Resources\ParentElibraryResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,7 @@ class ELibraryController extends Controller
     {
         // dd(Auth::user()->role);
         $ebooks = ELibrary::orderby('id', 'DESC')->get();
+        $ebooks = ElibraryResource::collection($ebooks);
         $response = [
             'message' => 'E-Book.',
             'statusCode' => 200,
@@ -36,6 +38,7 @@ class ELibraryController extends Controller
         $ebooks = ELibrary::where(function($q) {
             $q->where('view', '>=', 15);
         })->orderby('view', 'ASC')->get();
+        $ebooks = ElibraryResource::collection($ebooks);
         $response = [
             'message' => 'E-Book.',
             'statusCode' => 200,
@@ -50,6 +53,7 @@ class ELibraryController extends Controller
         $ebooks = ELibrary::where(function($q) {
             $q->where('year', '>=', 2010);
         })->orderby('year', 'ASC')->get();
+        $ebooks = ElibraryResource::collection($ebooks);
         $response = [
             'message' => 'E-Book.',
             'statusCode' => 200,
@@ -63,6 +67,9 @@ class ELibraryController extends Controller
         // dd(Auth::user()->role);
         // order elibrary by created at desc and only 10 row
         $ebooks = ELibrary::orderby('created_at', 'DESC')->take(10)->get();
+
+        $ebooks = ElibraryResource::collection($ebooks);
+
         $response = [
             'message' => 'E-Book.',
             'statusCode' => 200,
@@ -73,7 +80,15 @@ class ELibraryController extends Controller
 
     public function api_read($id)
     {
-        $ebook = ELibrary::findorfail($id);
+        // find ebook by ID with author name, publisher name, genre name
+        $ebook = ELibrary::where([
+            ['id', '=', $id],
+            ['status', '=', 1],
+            ['delete_status', '=', 0],
+        ])->first();
+
+        // $ebook by ID with author name, publisher name, genre name
+        $ebook = ParentElibraryResource::collection($ebook);
 
         $response = [
             'message' => 'E-Book.',
@@ -153,7 +168,7 @@ class ELibraryController extends Controller
         ->orderby('elibrary_id', 'DESC')
         ->get();
 
-        $ebookFavorite = ElibraryResource::collection($ebookFavorite);
+        $ebookFavorite = ParentElibraryResource::collection($ebookFavorite);
 
         return response()->json([
             'message' => 'success',
@@ -167,6 +182,8 @@ class ELibraryController extends Controller
         $ebooks = ELibrary::where(function($q) use($request) {
             $q->where('author_id', '=', $request->author_id);
         })->orderby('id', 'DESC')->get();
+
+        $ebooks = ElibraryResource::collection($ebooks);
 
         $response = [
             'message' => 'E-Book.',

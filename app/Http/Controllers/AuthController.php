@@ -275,8 +275,12 @@ class AuthController extends Controller
 		public function api_logout(Request $request){
 
 			$user = User::find($request->user_id);
-
-			PersonalAccessToken::where('token', $user->token)->delete();
+			$token = $request->bearerToken();
+			
+			if($token){
+				$token_id = find_string_before_pipe($token);
+				PersonalAccessToken::findorfail($token_id)->delete();
+			}
 
 			$user->token = null;
 			$user->save();

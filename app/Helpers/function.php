@@ -165,6 +165,15 @@ function userinfo()
   return $userinfo;
 }
 
+function find_string_before_pipe(string $string): string {
+  $pipe_index = strpos($string, '|');
+  if ($pipe_index === false) {
+    return '';
+  } else {
+    return substr($string, 0, $pipe_index);
+  }
+}
+
 // function permission($role_id,$page)
 // {
 // 	// $role_has_per = Role_has_per::where('role_id', $role_id)->get();

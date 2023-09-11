@@ -81,14 +81,8 @@ class ELibraryController extends Controller
     public function api_read($id)
     {
         // find ebook by ID with author name, publisher name, genre name
-        $ebook = ELibrary::where([
-            ['id', '=', $id],
-            ['status', '=', 1],
-            ['delete_status', '=', 0],
-        ])->first();
-
-        // $ebook by ID with author name, publisher name, genre name
-        $ebook = ParentElibraryResource::collection($ebook);
+        $ebook = ELibrary::findorfail($id);
+        $ebook = new ElibraryResource($ebook);
 
         $response = [
             'message' => 'E-Book.',

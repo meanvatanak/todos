@@ -54,7 +54,9 @@
     <div class="d-none d-sm-inline-block mt-2">
       <button class="btn btn-primary shadow-sm btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
       aria-controls="offcanvasRight">Filter</button>
-      @if(navbarCheck()[1]->optCreate != 0)
+      {{-- {{ session('permissions')[1]['optView'] }}
+      {{ session('permissions')[1]['optCreate'] }} --}}
+      @if(isset(session('permissions')[1]) && session('permissions')[1]['optCreate'] != 0)
       <a href="{!! url('/user/create') !!}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
         <i class="fas fa-create fa-sm text-white-50"></i> New
       </a>

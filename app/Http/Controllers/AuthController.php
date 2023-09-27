@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ThemeSetting;
 use App\Models\User;
+use App\Models\Permission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -78,6 +79,9 @@ class AuthController extends Controller
 				$user = User::find(Auth::user()->id);
 				$user->token = bin2hex(openssl_random_pseudo_bytes(30));
 				$user->save();
+				checkNewPermission(Auth::user()->role_id);
+				session()->put('roles', Auth::user()->role->toArray());
+				session()->put('permissions', Permission::where('role_id', Auth::user()->role_id)->get()->toArray());
 				toast('You have Successfully loggedin!','success');
 				return redirect()->intended('/dashboard');
 			}

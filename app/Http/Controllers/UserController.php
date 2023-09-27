@@ -97,36 +97,21 @@ class UserController extends Controller
 			{ return back(); }
 
 			$model = User::query()
-			->where([
-				['delete_status' , '=', 0],
-				['id' , '!=', 1],
-				])
+			->where( function($q) use($request){
+
+				if($request->name) 
+				{ $q->where('name', 'like', '%' . $request->name . '%'); }
+
+				if($request->phone) 
+				{ $q->where('phone', 'like', '%' . $request->phone . '%'); }
+
+				$q->where('delete_status', 0);
+				$q->where('id', '!=', 1);
+			})
 			->orderBy('id', 'DESC')->get();
 
-			if($request->name)
-			{
-				$matchthese = [
-					['name' , 'LIKE', '%'.$request->name.'%'],
-					['delete_status' , '=', 0],
-					['id' , '!=', 1],
-				];
-				$model = User::query()
-				->where($matchthese)
-				->orderBy('id', 'DESC')->get();
-			}
-
-			if($request->phone)
-			{
-				$matchthese = [
-					['phone' , 'LIKE', '%'.$request->phone.'%'],
-					['delete_status' , '=', 0],
-					['id' , '!=', 1],
-				];
-				$model = User::query()
-				->where($matchthese)
-				->orderBy('id', 'DESC')->get();
-			}
 			$nav = session('permissions')[1];
+
 			return DataTables::of($model)
 				->addIndexColumn()
 				->addColumn('role', function (User $model) {
@@ -153,8 +138,8 @@ class UserController extends Controller
      */
     public function index()
     {
-			// if(!isset(session('permissions')[1]) || session('permissions')[1]['optView'] == 0)
-			// { return back(); }
+			if(!isset(session('permissions')[1]) || session('permissions')[1]['optView'] == 0)
+			{ return back(); }
 
     	return view('user.index');
     }

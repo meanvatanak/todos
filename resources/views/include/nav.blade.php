@@ -60,10 +60,10 @@
 				</a>
 				<div class="collapse" id="sidebarMaps">
 					<ul class="side-nav-second-level">
-						@if(navbarCheck()[0]->name == 'Role')
+						@if(isset(session('permissions')[0]) && session('permissions')[0]['name'] == 'Role')
 						<li> <a href="{{ url('role') }}">Role</a> </li>
 						@endif
-						@if(navbarCheck()[1]->name == 'User')
+						@if(isset(session('permissions')[1]) && session('permissions')[1]['name'] == 'User')
 						<li> <a href="{{ url('user') }}">User</a> </li> 
 						@endif
 					</ul>

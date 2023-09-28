@@ -17,8 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('login', [AuthController::class, 'login'])->name('login.login');
+Route::post('login', [AuthController::class, 'login'])->name('api_login.login');
 Route::post('/logout', [AuthController::class, 'api_logout'])->name('api_logout.logout');
+Route::post('/register', [AuthController::class, 'api_register'])->name('api_register.register');
 
 Route::middleware('auth:sanctum')->group(function() {
   // E-Libraries

@@ -82,7 +82,9 @@ class ELibraryController extends Controller
     {
         // find ebook by ID with author name, publisher name, genre name
         $ebook = ELibrary::findorfail($id);
-        $ebook = new ElibraryResource($ebook);
+        $ebook->view = $ebook->view + 1;
+        $ebook->save();
+        $ebook = new ElibraryResource($ebook);        
 
         $response = [
             'message' => 'E-Book.',

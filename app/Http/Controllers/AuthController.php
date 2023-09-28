@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\ThemeSetting;
 use App\Models\User;
 use App\Models\Permission;
+use App\Models\UserHistory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -219,6 +221,113 @@ class AuthController extends Controller
 			Auth::login($user);
 			return redirect("dashboard")->withSuccess('Great! You have Successfully loggedin');
     }
+
+		public function api_register(Request $request)
+		{
+			$rules = array(
+				'full_name' => 'required',
+				'phone' => [
+						'required',
+						'regex:/(0)[0-9]/',
+						'not_regex:/[a-z]/',
+						'min:9',
+						Rule::unique('users')->where(function ($query) use ($request) {
+								return $query->where('phone', $request->phone)
+														->where('delete_status', 0);
+						})
+				],
+				'gender' => 'required',
+				'email' => 'required|email',
+				'address' => 'required',
+				'username' => [
+					'required',
+					Rule::unique('users')->where(function ($query) use ($request) {
+							return $query->where('username', $request->name)
+													->where('delete_status', 0);
+					})
+				],
+				'password' => 'min:8|required_with:password_confirmation|same:password_confirmation',
+			);
+
+			$messages = array(
+				'full_name.required' => 'Please insert candidate name!',
+				'phone.required' => 'Please insert phone number!',
+				'phone.unique' => $request->phone.' is already been taken!',
+				'phone.not_regex' => 'Please insert number only in phone number field!',
+				'gender' => 'Please select gender',
+				'email.required' => 'Please insert email!',
+				'email.email' => 'Email is incorrect format!',
+				'address.required' => 'Please insert address!',
+				'username.required' => 'Please insert username!',
+				'username.unique' => $request->username.' is already been taken!',
+				'password.required' => 'Please insert password!',
+				'password_confirmation.required' => 'Please insert confirm password!',
+				'password_confirmation.same' => 'Password and confirm password not match!',
+			);
+
+			$validator = Validator::make( $request->all(), $rules, $messages );
+			if ($validator->fails()) {
+				return response()->json(['error'=>$validator->errors()], Response::HTTP_UNAUTHORIZED);
+			}
+
+			$theme = new ThemeSetting();
+			$theme->theme = 'light';
+			$theme->compact = 'condensed';
+			$theme->timestamps = false;
+			// $theme->created_by = Auth::id();
+			$theme->created_at = Carbon::now();
+
+			//Create New User
+			$user = New User;
+			$theme->save();
+			$user->name = $request->full_name;
+			$user->phone = $request->phone;
+			$user->gender = $request->gender;
+			$user->email = $request->email;
+			$user->address = $request->address;
+			$user->role_id = 3;
+			$user->username = $request->username;
+			$user->theme_id = $theme->id;
+			
+			$user->password = Hash::make($request->input('password'));
+			
+			$user->status = 1;
+			$user->timestamps = false;
+			$user->created_at = Carbon::now();
+			$user->save();
+
+			$user_history = New UserHistory();
+			$user_history->user_id = $user->id;
+			$user_history->username = $user->username;
+			$user_history->password = 'Created';
+			$user_history->phone = $user->phone;
+			$user_history->gender = $user->gender;
+			$user_history->image = $user->image;
+			$user_history->email = $user->email;
+			$user_history->name = $user->name;
+			$user_history->address = $user->address;
+			$user_history->role = $user->role->role_name;
+
+			$user_history->status = $user->status;
+			$user_history->delete_status = 0;
+
+			$user_history->timestamps = false;
+			$user_history->created_by = 'API_Register';
+			$user_history->created_at = $user->created_at;
+			$user_history->save();
+
+			$response = [
+				'message' => 'You have Successfully registered!',
+				'statusCode' => 200,
+				'user' => $user,
+			];
+
+			return response(
+				$response,
+				Response::HTTP_OK
+			);
+
+		}
 
     /**
      * Write code on Method

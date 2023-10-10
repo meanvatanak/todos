@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
@@ -448,6 +449,81 @@ class UserController extends Controller
 			toast('User has been updated!','success');
 			return redirect('/user');
     }
+
+		public function updateProfile(Request $request, $id)
+		{
+			$rules = array(
+				'name' => 'required',
+				'phone' => 'required|regex:/(0)[0-9]/|not_regex:/[a-z]/|min:9',
+				'gender' => 'required',
+				'email' => 'required|email',
+				'address' => 'required',
+			);
+
+			$messages = array(
+				'name.required' => 'Please insert name!',
+				'phone.required' => 'Please insert phone number!',
+				'phone.not_regex' => 'Please insert number only in phone number field!',
+				'gender.required' => 'Please select gender!',
+				'email.required' => 'Please insert email!',
+				'address.required' => 'Please insert address!',
+			);
+			$validator = Validator::make( $request->all(), $rules, $messages );
+			if ($validator->fails()) {
+				return response([
+					'message' => 'Validation Error',
+					'statusCode' => Response::HTTP_UNAUTHORIZED,
+					'errors' => $validator->errors(),
+				], Response::HTTP_UNAUTHORIZED);
+			}
+
+			$user = User::findorfail($id);
+			$user->name = $request->name;
+			$user->phone = $request->phone;
+			$user->gender = $request->gender;
+			$user->email = $request->email;
+			$user->address = $request->address;
+			$user->timestamps = false;
+			$user->updated_by = $id;
+			$user->updated_at = Carbon::now();
+			$user->save();
+
+			$user_history = New UserHistory();
+			$user_history->user_id = $user->id;
+			$user_history->username = $user->username;
+			if($request->input('password') != '')
+			{ $user_history->password = 'Has been changed'; }
+			else
+			{ $user_history->password = 'Has not been changed'; }
+			$user_history->phone = $user->phone;
+			$user_history->gender = $user->gender;
+			$user_history->image = $user->image;
+			$user_history->email = $user->email;
+			$user_history->name = $user->name;
+			$user_history->address = $user->address;
+			$user_history->role = $user->role->role_name;
+
+			$user_history->status = $user->status;
+			$user_history->delete_status = $user->delete_status;
+
+			$user_history->timestamps = false;
+			$user_history->updated_by = $user->updated_by;
+			$user_history->updated_at = $user->updated_at;
+			$user_history->save();
+
+			return response()->json([
+					// 'meta' => [
+					//     'current_page' => $ebooks['meta']['current_page'],
+					//     'last_page' => $ebooks['meta']['last_page'],
+					//     'total' => $ebooks['meta']['total'],
+					//     'from' => $ebooks['meta']['from'],
+					//     'to' => $ebooks['meta']['to'],
+					// ],
+					'message' => 'E-Book.',
+					'statusCode' => 200,
+					'data' => $user,
+			]);
+		}
 
     /**
      * Remove the specified resource from storage.

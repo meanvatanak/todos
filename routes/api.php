@@ -32,4 +32,11 @@ Route::middleware('auth:sanctum')->group(function() {
   Route::post('/e-libraries/get-favorite',[ELibraryController::class, 'get_favorite'])->name('e-libraries.get_favorite');
   Route::post('/e-libraries/get-author',[ELibraryController::class, 'get_books_by_author'])->name('e-libraries.get_books_by_author');
 
+  // User
+  // Route::get('/user',[UserController::class, 'index'])->name('user.index');
+  // Route::get('/user/{id}',[UserController::class, 'show'])->name('user.show');
+  // Route::post('/user',[UserController::class, 'store'])->name('user.store');
+  Route::post('/user/{id}',[UserController::class, 'updateProfile'])->name('user.updateProfile');
+  Route::delete('/user/{id}',[UserController::class, 'destroy'])->name('user.destroy');
+
 });

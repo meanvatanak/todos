@@ -256,7 +256,6 @@ class AuthController extends Controller
 				'phone.not_regex' => 'Please insert number only in phone number field!',
 				'gender' => 'Please select gender',
 				'email.required' => 'Please insert email!',
-				'email.email' => 'Email is incorrect format!',
 				'address.required' => 'Please insert address!',
 				'username.required' => 'Please insert username!',
 				'username.unique' => $request->username.' is already been taken!',
@@ -267,7 +266,7 @@ class AuthController extends Controller
 
 			$validator = Validator::make( $request->all(), $rules, $messages );
 			if ($validator->fails()) {
-				return response()->json(['error'=>$validator->errors()], Response::HTTP_UNAUTHORIZED);
+				return response()->json(['message'=> $validator->errors()], Response::HTTP_UNAUTHORIZED);
 			}
 
 			$theme = new ThemeSetting();

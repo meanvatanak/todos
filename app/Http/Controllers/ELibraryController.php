@@ -19,17 +19,25 @@ use Yajra\DataTables\Facades\DataTables;
 class ELibraryController extends Controller
 {
 
-    public function getJsonEbook()
+    public function getJsonEbook(Request $request) 
     {
         // dd(Auth::user()->role);
-        $ebooks = ELibrary::orderby('id', 'DESC')->get();
-        $ebooks = ElibraryResource::collection($ebooks);
-        $response = [
+        $ebooks = ELibrary::orderby('id', 'DESC')->paginate($request->per_page??5);
+        
+        $ebooks = ElibraryResource::collection($ebooks)->response()->getData(true);
+        
+        return response()->json([
+            // 'meta' => [
+            //     'current_page' => $ebooks['meta']['current_page'],
+            //     'last_page' => $ebooks['meta']['last_page'],
+            //     'total' => $ebooks['meta']['total'],
+            //     'from' => $ebooks['meta']['from'],
+            //     'to' => $ebooks['meta']['to'],
+            // ],
             'message' => 'E-Book.',
             'statusCode' => 200,
-            'data' => $ebooks
-        ];
-        return response()->json($response);
+            'data' => $ebooks['data'],
+        ]);
     }
 
     public function getJsonPopularEbook()

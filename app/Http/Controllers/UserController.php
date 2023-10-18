@@ -519,7 +519,7 @@ class UserController extends Controller
 					//     'from' => $ebooks['meta']['from'],
 					//     'to' => $ebooks['meta']['to'],
 					// ],
-					'message' => 'E-Book.',
+					'message' => 'User',
 					'statusCode' => 200,
 					'data' => $user,
 			]);

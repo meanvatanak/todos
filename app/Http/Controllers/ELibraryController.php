@@ -164,20 +164,21 @@ class ELibraryController extends Controller
         //             )
         //             ->distinct()
         //             ->get();
+        
         $ebookFavorite = ELibraryFavorite::where(function ($q) use($request){
             $q->where('user_id', $request->user_id);
             $q->where('delete_status', 0);
         })
         ->groupBy('elibrary_id')
         ->orderby('elibrary_id', 'DESC')
-        ->get();
+        ->paginate($request->per_page??5);
 
-        $ebookFavorite = ParentElibraryResource::collection($ebookFavorite);
+        $ebookFavorite = ParentElibraryResource::collection($ebookFavorite)->response()->getData(true);
 
         return response()->json([
             'message' => 'success',
             'statusCode' => 200,
-            'data' => $ebookFavorite
+            'data' => $ebookFavorite['data'],
         ]);
     }
 

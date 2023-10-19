@@ -50,9 +50,9 @@ class ELibraryController extends Controller
         ->paginate($request->per_page??5);
         $ebooks = ElibraryResource::collection($ebooks)->response()->getData(true);
         $response = [
-            'message' => 'E-Book.',
+            'message' => 'Popular E-Book.',
             'statusCode' => 200,
-            'data' => $ebooks
+            'data' => $ebooks['data']
         ];
         return response()->json($response);
     }

@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function() {
   Route::get('/api-popular-e-libraries',[ELibraryController::class, 'getJsonPopularEbook'])->name('e-libraries.getJsonPopularEbook');
   Route::get('/api-new-e-libraries',[ELibraryController::class, 'getJsonNewEbook'])->name('e-libraries.getJsonNewEbook');
   Route::get('/api-upload-e-libraries',[ELibraryController::class, 'getJsonUploadEbook'])->name('e-libraries.getJsonUploadEbook');
+  Route::get('/api-authors',[ELibraryController::class, 'getJsonAuthor'])->name('e-libraries.getJsonAuthor');
   Route::get('/e-libraries/{id}/api',[ELibraryController::class, 'api_read'])->name('e-libraries.api_read');
   Route::post('/e-libraries/save-favorite',[ELibraryController::class, 'api_favorite'])->name('e-libraries.api_favorite');
   Route::post('/e-libraries/get-favorite',[ELibraryController::class, 'get_favorite'])->name('e-libraries.get_favorite');

@@ -182,18 +182,31 @@ class ELibraryController extends Controller
         ]);
     }
 
+    public function getJsonAuthor(Request $request)
+    {
+        // dd(Auth::user()->role);
+        $authors = Author::orderby('name', 'ASC')
+        ->paginate($request->per_page??5);
+        $response = [
+            'message' => 'Author',
+            'statusCode' => 200,
+            'data' => $authors['data'],
+        ];
+        return response()->json($response);
+    }
+
     public function get_books_by_author(Request $request)
     {
         $ebooks = ELibrary::where(function($q) use($request) {
             $q->where('author_id', '=', $request->author_id);
-        })->orderby('id', 'DESC')->get();
+        })->orderby('id', 'DESC')->paginate($request->per_page??5);
 
-        $ebooks = ElibraryResource::collection($ebooks);
+        $ebooks = ElibraryResource::collection($ebooks)->response()->getData(true);;
 
         $response = [
             'message' => 'E-Book.',
             'statusCode' => 200,
-            'data' => $ebooks
+            'data' => $ebooks['data']
         ];
         return response()->json($response);
     }

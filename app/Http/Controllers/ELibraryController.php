@@ -40,13 +40,15 @@ class ELibraryController extends Controller
         ]);
     }
 
-    public function getJsonPopularEbook()
+    public function getJsonPopularEbook(Request $request)
     {
         // dd(Auth::user()->role);
         $ebooks = ELibrary::where(function($q) {
             $q->where('view', '>=', 15);
-        })->orderby('view', 'ASC')->get();
-        $ebooks = ElibraryResource::collection($ebooks);
+        })
+        ->orderby('view', 'ASC')
+        ->paginate($request->per_page??5);
+        $ebooks = ElibraryResource::collection($ebooks)->response()->getData(true);
         $response = [
             'message' => 'E-Book.',
             'statusCode' => 200,
@@ -114,9 +116,7 @@ class ELibraryController extends Controller
 
         if($ebookFavorite)
         {
-            $ebookFavorite->delete_status = 1;
-            $ebookFavorite->timestamps = false;
-            $ebookFavorite->save();
+            $ebookFavorite->delete();
 
             $response = [
                 'message' => 'E-Book.',

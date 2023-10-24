@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AuthorResource;
 use App\Models\Author;
 use App\Models\ELibrary;
 use App\Models\ElibraryFavorite;
@@ -187,12 +188,12 @@ class ELibraryController extends Controller
         // dd(Auth::user()->role);
         $authors = Author::orderby('name', 'ASC')
         ->paginate($request->per_page??5);
-        $response = [
+        $authors = AuthorResource::collection($authors)->response()->getData(true);
+        return response()->json([
             'message' => 'Author',
             'statusCode' => 200,
             'data' => $authors['data'],
-        ];
-        return response()->json($response);
+        ]);
     }
 
     public function get_books_by_author(Request $request)
@@ -201,7 +202,7 @@ class ELibraryController extends Controller
             $q->where('author_id', '=', $request->author_id);
         })->orderby('id', 'DESC')->paginate($request->per_page??5);
 
-        $ebooks = ElibraryResource::collection($ebooks)->response()->getData(true);;
+        $ebooks = ElibraryResource::collection($ebooks)->response()->getData(true);
 
         $response = [
             'message' => 'E-Book.',

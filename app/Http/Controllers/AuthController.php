@@ -237,12 +237,19 @@ class AuthController extends Controller
 						})
 				],
 				'gender' => 'required',
-				'email' => 'required|email',
+				'email' =>  [
+					'required',
+					'email',
+					Rule::unique('users')->where(function ($query) use ($request) {
+							return $query->where('email', $request->email)
+													->where('delete_status', 0);
+					})
+				],
 				'address' => 'required',
 				'username' => [
 					'required',
 					Rule::unique('users')->where(function ($query) use ($request) {
-							return $query->where('username', $request->name)
+							return $query->where('username', $request->username)
 													->where('delete_status', 0);
 					})
 				],

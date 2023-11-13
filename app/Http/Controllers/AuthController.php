@@ -261,7 +261,7 @@ class AuthController extends Controller
 				'phone.required' => 'Please insert phone number!',
 				'phone.unique' => $request->phone.' is already been taken!',
 				'phone.not_regex' => 'Please insert number only in phone number field!',
-				'gender' => 'Please select gender',
+				'gender.required' => 'Please select gender',
 				'email.required' => 'Please insert email!',
 				'address.required' => 'Please insert address!',
 				'username.required' => 'Please insert username!',

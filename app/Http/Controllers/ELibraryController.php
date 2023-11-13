@@ -10,6 +10,7 @@ use App\Models\ELibraryHistory;
 use App\Models\Genre;
 use App\Models\Publisher;
 use App\Http\Resources\ElibraryResource;
+use App\Http\Resources\GenreResource;
 use App\Http\Resources\ParentElibraryResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -200,6 +201,35 @@ class ELibraryController extends Controller
     {
         $ebooks = ELibrary::where(function($q) use($request) {
             $q->where('author_id', '=', $request->author_id);
+        })->orderby('id', 'DESC')->paginate($request->per_page??5);
+
+        $ebooks = ElibraryResource::collection($ebooks)->response()->getData(true);
+
+        $response = [
+            'message' => 'E-Book.',
+            'statusCode' => 200,
+            'data' => $ebooks['data']
+        ];
+        return response()->json($response);
+    }
+
+    public function getJsonGenre(Request $request)
+    {
+        // dd(Auth::user()->role);
+        $genres = Genre::orderby('name', 'ASC')
+        ->paginate($request->per_page??5);
+        $genres = GenreResource::collection($genres)->response()->getData(true);
+        return response()->json([
+            'message' => 'Genre',
+            'statusCode' => 200,
+            'data' => $genres['data'],
+        ]);
+    }
+
+    public function getBooksByGenre(Request $request)
+    {
+        $ebooks = ELibrary::where(function($q) use($request) {
+            $q->where('genre_id', '=', $request->genre_id);
         })->orderby('id', 'DESC')->paginate($request->per_page??5);
 
         $ebooks = ElibraryResource::collection($ebooks)->response()->getData(true);

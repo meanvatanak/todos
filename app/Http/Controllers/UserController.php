@@ -484,7 +484,7 @@ class UserController extends Controller
 			$user->email = $request->email;
 			$user->address = $request->address;
 			$user->timestamps = false;
-			$user->updated_by = $id;
+			$user->updated_by = (int)$id;
 			$user->updated_at = Carbon::now();
 			$user->save();
 

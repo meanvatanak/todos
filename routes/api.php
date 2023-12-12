@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ELibraryController;
+use App\Http\Controllers\TodoCategoryController;
+use App\Http\Controllers\TodoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +36,22 @@ Route::middleware('auth:sanctum')->group(function() {
   Route::post('/e-libraries/get-favorite',[ELibraryController::class, 'get_favorite'])->name('e-libraries.get_favorite');
   Route::post('/e-libraries/get-author',[ELibraryController::class, 'get_books_by_author'])->name('e-libraries.get_books_by_author');
   Route::post('/e-libraries/get-genre',[ELibraryController::class, 'getBooksByGenre'])->name('e-libraries.getBooksByGenre');
+
+  // Todo
+  Route::get('/todos',[TodoController::class, 'getJsonAllTodos'])->name('todos.getJsonTodos');
+  Route::post('/todos-category',[TodoController::class, 'getJsonCategoryTodos'])->name('todos.getJsonCategoryTodos');
+  Route::get('/todos-deleted-todos',[TodoController::class, 'getJsonRecycleBin'])->name('todos.getJsonRecycleBin');
+  Route::post('/todos-create',[TodoController::class, 'apiStore'])->name('todos.apiStore');
+  Route::get('/todos-edit/{id}',[TodoController::class, 'apiEdit'])->name('todos.apiEdit');
+  Route::post('/todos-update/{id}',[TodoController::class, 'apiUpdate'])->name('todos.apiUpdate');
+  Route::post('/todos-delete/{id}',[TodoController::class, 'apiDelete'])->name('todos.apiDelete');
+
+  // TodoCategory
+  Route::get('/todo-categories',[TodoCategoryController::class, 'getJsonTodoCategories'])->name('todo-categories.getJsonTodoCategories');
+  Route::post('/todo-categories-create',[TodoCategoryController::class, 'apiStore'])->name('todo-categories.apiStore');
+  Route::get('/todo-categories-edit/{id}',[TodoCategoryController::class, 'apiEdit'])->name('todo-categories.apiEdit');
+  Route::post('/todo-categories-update/{id}',[TodoCategoryController::class, 'apiUpdate'])->name('todo-categories.apiUpdate');
+  Route::post('/todo-categories-delete/{id}',[TodoCategoryController::class, 'apiDelete'])->name('todo-categories.apiDelete');
 
   // User
   // Route::get('/user',[UserController::class, 'index'])->name('user.index');

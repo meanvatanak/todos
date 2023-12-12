@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TodosResource;
 use App\Models\Todo;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -11,16 +13,52 @@ use Yajra\DataTables\Facades\DataTables;
 class TodoController extends Controller
 {
     // get data to json
-    public function getJson()
+    public function getJsonAllTodos(Request $request)
     {
-        // dd(Auth::user()->role);
-        $todos = Todo::orderby('id', 'DESC')->get();
+        $todos = Todo::where(function($q) {
+            $q->where('delete_status', 0);
+        })->orderby('name', 'ASC')->paginate($request->per_page??5);
+
+        $todos = TodosResource::collection($todos)->response()->getData(true);
+
         $response = [
-            'message' => 'Todo list.',
+            'message' => 'Todo list retrieved successfully.',
             'statusCode' => 200,
-            'data' => $todos
+            'data' => $todos['data'],
         ];
+
         return response()->json($response);
+    }
+
+    public function getJsonCategoryTodos(Request $request)
+    {
+        $todos = Todo::where(function($q) use($request){
+            $q->where('delete_status', 0);
+            $q->where('category_id', $request->category_id);
+        })->orderby('name', 'ASC')->paginate($request->per_page??5);
+
+        $todos = TodosResource::collection($todos)->response()->getData(true);
+
+        $response = [
+            'message' => 'Category Todo list retrieved successfully.',
+            'statusCode' => 200,
+            'data' => $todos['data'],
+        ];
+
+        return response()->json($response);
+    }
+
+    public function getJsonRecycleBin(Request $request)
+    {
+        $todo_categories = Todo::where(function($q) {
+            $q->where('delete_status', 1);
+        })->orderby('name', 'ASC')->paginate($request->per_page??5);
+        $todo_categories = TodosResource::collection($todo_categories)->response()->getData(true);
+        return response()->json([
+            'message' => 'Deleted Tasks retrieved successfully.',
+            'statusCode' => 200,
+            'data' => $todo_categories['data'],
+        ]);
     }
 
     // index of todo
@@ -116,18 +154,20 @@ class TodoController extends Controller
     }
 
     // store todo
-    public function store_api(Request $request)
+    public function apiStore(Request $request)
     {
         $rules = array(
             'name' => 'required',
             'due_date' => 'required',
             'user_id' => 'required',
+            'category_id' => 'required',
         );
         
         $messages = array(
             'name.required' => 'Please Task Name!',
             'due_date.required' => 'Please Select Due Date!',
             'user_id.required' => 'Please Insert User!',
+            'category_id.required' => 'Please Seleted Category!',
         );
 
 		$validator = Validator::make( $request->all(), $rules, $messages );
@@ -136,21 +176,20 @@ class TodoController extends Controller
 		    return response()->json(['error'=>$validator->errors()], 401);
 		}
 
-        // $todo = new Todo();
-        // $todo->name = $request->name;
-        // $todo->due_date = date('Y-m-d', strtotime($request->due_date));
-        // $todo->description = $request->description;
-        // $todo->status = $request->status?1:0;
-        // $todo->timestamps = false;
-        // $todo->save();
+        $todo = new Todo();
+        $todo->name = $request->name;
+        $todo->description = $request->description;
+        $todo->due_date = date('Y-m-d', strtotime($request->due_date));
+        $todo->user_id = intval($request->user_id);
+        $todo->category_id = intval($request->category_id);
+        $todo->status = intval($request->status);
+        $todo->delete_status = 0;
+        $todo->timestamps = false;
+        $todo->created_by = intval($request->user_id);
+        $todo->created_at = Carbon::now();
+        $todo->save();
 
-        $todo = Todo::create([
-                'name' => $request->name,
-                'due_date' => date('Y-m-d', strtotime($request->due_date)),
-                'description' => $request->description,
-                'status' => $request->status?1:0,
-                'user_id' => $request->user_id,
-        ]);
+        $todo = new TodosResource($todo);
 
         $response = [
             'message' =>  'Todo created successfully.',
@@ -169,34 +208,51 @@ class TodoController extends Controller
                     ->with('todo', $todo);
     }
 
+    public function apiEdit($id)
+    {
+        $todo = Todo::findorfail($id);
+        $todo = new TodosResource($todo);
+        $response = [
+            'message' => 'Todo Edit successfully.',
+            'statusCode' => 200,
+            'data' => $todo
+        ];
+        return response($response);
+    }
+
     // store todo
     public function update($id, Request $request)
     {
         $rules = array(
             'name' => 'required',
             'due_date' => 'required',
+            'user_id' => 'required',
+            'category_id' => 'required',
         );
         
         $messages = array(
             'name.required' => 'Please Task Name!',
             'due_date.required' => 'Please Select Due Date!',
+            'user_id.required' => 'Please Insert User!',
+            'category_id.required' => 'Please Seleted Category!',
         );
 
 		$validator = Validator::make( $request->all(), $rules, $messages );
 		if ($validator->fails()) 
         {
-		    return back()
-                ->withInput()
-                ->withErrors($validator);
+		    return response()->json(['error'=>$validator->errors()], 401);
 		}
 
-        $todo = Todo::findorfail($id);
+        $todo = Todo::find($id);
         $todo->name = $request->name;
-        $todo->due_date = date('Y-m-d', strtotime($request->due_date));
         $todo->description = $request->description;
-        $todo->user_id = auth()->user()->id;
+        $todo->due_date = date('Y-m-d', strtotime($request->due_date));
+        $todo->user_id = $request->user_id;
+        $todo->category_id = $request->category_id;
         $todo->status = $request->status?1:0;
         $todo->timestamps = false;
+        $todo->updated_by = intval($request->user_id);
+        $todo->updated_at = Carbon::now();
         $todo->save();
 
         toast('success', 'Todo update successfully.');
@@ -205,7 +261,7 @@ class TodoController extends Controller
     }
 
     // store todo
-    public function update_api($id, Request $request)
+    public function apiUpdate($id, Request $request)
     {
         $rules = array(
             'name' => 'required',
@@ -227,10 +283,15 @@ class TodoController extends Controller
         $todo->name = $request->name;
         $todo->due_date = date('Y-m-d', strtotime($request->due_date));
         $todo->description = $request->description;
-        $todo->user_id = $request->user_id;
-        $todo->status = $request->status?1:0;
+        $todo->user_id = intval($request->user_id);
+        $todo->category_id = intval($request->category_id);
+        $todo->status = intval($request->status);
         $todo->timestamps = false;
+        $todo->updated_by = intval($request->user_id);
+        $todo->updated_at = Carbon::now();
         $todo->save();
+
+        $todo = new TodosResource($todo);
 
         $response = [
             'message' => 'Todo update successfully.',
@@ -252,19 +313,22 @@ class TodoController extends Controller
     }
 
     // delete todo
-    public function destroy_api($id)
+    public function apiDelete(Request $request, $id)
     {
         $todo = Todo::findorfail($id);
-        $todo->delete();
+        $todo->delete_status = 1;
+        $todo->timestamps = false;
+        $todo->deleted_by = intval($request->user_id);
+        $todo->deleted_at = Carbon::now();
+        $todo->save();
+
+        $todo = new TodosResource($todo);
 
         $response = [
             'message' => 'Todo deleted successfully.',
             'statusCode' => 200,
+            'data' => $todo
         ];
-
-        // toast('success', 'Todo deleted successfully.');
-        // return redirect()->route('todos.index');
-        // return response()->json($response);
         return response($response);
     }
 }

@@ -67,10 +67,13 @@ class TodoCategoryController extends Controller
                                  ->where('delete_status', 0);
                 })
             ],
+            'status' => 'required|in:0,1',
 		);
 
         $messages = array(
             'name.required' => 'Name is required.',
+            'status.required' => 'Status is required.',
+            'status.in' => 'Status is invalid.',
         );
 
 		$validator = Validator::make( $request->all(), $rules, $messages );
@@ -156,10 +159,13 @@ class TodoCategoryController extends Controller
                                  ->where('delete_status', 0);
                 })
             ],
+            'status' => 'required|in:0,1',
 		);
 
         $messages = array(
             'name.required' => 'Name is required.',
+            'status.required' => 'Status is required.',
+            'status.in' => 'Status is invalid.',
         );
 
 		$validator = Validator::make( $request->all(), $rules, $messages );

@@ -161,6 +161,7 @@ class TodoController extends Controller
             'due_date' => 'required',
             'user_id' => 'required',
             'category_id' => 'required',
+            'status' => 'required|in:0,1',
         );
         
         $messages = array(
@@ -168,6 +169,8 @@ class TodoController extends Controller
             'due_date.required' => 'Please Select Due Date!',
             'user_id.required' => 'Please Insert User!',
             'category_id.required' => 'Please Seleted Category!',
+            'status.required' => 'Status is required.',
+            'status.in' => 'Status is invalid.',
         );
 
 		$validator = Validator::make( $request->all(), $rules, $messages );
@@ -266,11 +269,18 @@ class TodoController extends Controller
         $rules = array(
             'name' => 'required',
             'due_date' => 'required',
+            'user_id' => 'required',
+            'category_id' => 'required',
+            'status' => 'required|in:0,1',
         );
         
         $messages = array(
             'name.required' => 'Please Task Name!',
             'due_date.required' => 'Please Select Due Date!',
+            'user_id.required' => 'Please Insert User!',
+            'category_id.required' => 'Please Seleted Category!',
+            'status.required' => 'Status is required.',
+            'status.in' => 'Status is invalid.',
         );
 
 		$validator = Validator::make( $request->all(), $rules, $messages );

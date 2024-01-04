@@ -31,6 +31,10 @@ class TodoCategoryController extends Controller
         return response()->json([
             'message' => 'todoCategories retrieved successfully.',
             'statusCode' => 200,
+            'page' => $todo_categories['meta']['current_page'],
+            'pageSize' => $todo_categories['meta']['per_page'],
+            'totalCount' => $todo_categories['meta']['total'],
+            'totalPages' => $todo_categories['meta']['last_page'],
             'data' => $todo_categories['data'],
         ]);
     }

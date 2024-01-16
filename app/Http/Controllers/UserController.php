@@ -321,6 +321,31 @@ class UserController extends Controller
 			->with('user_history',$user_history);
     }
 
+		public function showApi($id)
+		{
+			$user = User::find($id);
+
+			if(!$user)
+			{
+				return response()->json([
+					'message' => 'User not found',
+					'statusCode' => Response::HTTP_UNAUTHORIZED,
+				], Response::HTTP_UNAUTHORIZED);
+			} else if($user->delete_status == 1) {
+				return response()->json([
+					'message' => 'User has been deleted',
+					'statusCode' => Response::HTTP_UNAUTHORIZED,
+				], Response::HTTP_UNAUTHORIZED);
+			} 
+			else {
+				return response()->json([
+					'message' => 'User',
+					'statusCode' => 200,
+					'data' => $user,
+				]);
+			}
+		}
+
     /**
      * Show the form for editing the specified resource.
      *

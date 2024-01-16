@@ -55,7 +55,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
   // User
   // Route::get('/user',[UserController::class, 'index'])->name('user.index');
-  // Route::get('/user/{id}',[UserController::class, 'show'])->name('user.show');
+  Route::get('/user/{id}',[UserController::class, 'showApi'])->name('user.showApi');
   // Route::post('/user',[UserController::class, 'store'])->name('user.store');
   Route::post('/user/{id}',[UserController::class, 'updateProfile'])->name('user.updateProfile');
   Route::delete('/user/{id}',[UserController::class, 'destroy'])->name('user.destroy');

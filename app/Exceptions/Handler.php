@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ModelNotFoundException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -39,11 +41,26 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
-            if ($request->is('api/*')) {
+            if ($request->is('api/*') || $request->wantsJson()) {
                 return response()->json([
-                    'message' => 'Not authenticated'
+                    'message' => [
+                        'authentication' => 'Not authenticated',
+                    ],
                 ], 401);
             }
         });
+
+        // Add this block to handle ModelNotFoundException
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => [
+                        'Route' =>'Route not found.',
+                    ],
+                ], 404);
+            }
+        });
+    
+        
     }
 }

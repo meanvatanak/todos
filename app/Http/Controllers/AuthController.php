@@ -99,16 +99,18 @@ class AuthController extends Controller
             
 			]);
 			if ($validator->fails()) {
-				return response()->json(['error'=>$validator->errors()], Response::HTTP_UNAUTHORIZED);
+				return response()->json(['message'=>$validator->errors()], Response::HTTP_UNAUTHORIZED);
 			}
       $request['status'] = 1;
 			$request['delete_status'] = 0;
 			$credentials = $request->only('username', 'password', 'status','delete_status');
 
+			$messages = array(
+				'authentication' => 'Oppes! You have entered invalid credential!',
+			);
+
 			if(!Auth::attempt($credentials)) {
-				return response([
-					'message' => 'Invalid Credentials!'
-				], Response::HTTP_UNAUTHORIZED);
+				return response()->json(['message'=> $messages], Response::HTTP_UNAUTHORIZED);
 			}
 
 			// if (Auth::attempt($credentials)) {
@@ -411,6 +413,9 @@ class AuthController extends Controller
 				'message' => 'You have Successfully loggedout!',
 				'statusCode' => 200,
 			];
-			return response($response);
+			return response(
+				$response,
+				Response::HTTP_OK
+			);
 		}
 }
